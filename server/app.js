@@ -1,4 +1,12 @@
 import express from "express";
+import session from "express-session";
+import MongoStore from "connect-mongo";
+import passport from "./auth/passport.js";
+import { DB_NAME, getClientPromise } from "./db/client.js";
+import authRouter from "./routes/auth.js";
+
+const isProduction = process.env.NODE_ENV === "production";
+const TWO_WEEKS_IN_SECONDS = 14 * 24 * 60 * 60;
 
 const app = express();
 
@@ -8,9 +16,36 @@ app.set("trust proxy", 1);
 
 app.use(express.json({ limit: "100kb" }));
 
+app.use(
+  session({
+    name: "ablation.sid",
+    secret: process.env.SESSION_SECRET || "ablation-development-secret",
+    resave: false,
+    saveUninitialized: false,
+    // Serverless invocations do not share memory, so sessions live in Mongo.
+    store: MongoStore.create({
+      clientPromise: getClientPromise(),
+      dbName: DB_NAME,
+      collectionName: "sessions",
+      ttl: TWO_WEEKS_IN_SECONDS,
+    }),
+    cookie: {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: isProduction,
+      maxAge: TWO_WEEKS_IN_SECONDS * 1000,
+    },
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.get("/api/health", (req, res) => {
   res.json({ ok: true });
 });
+
+app.use("/api/auth", authRouter);
 
 // Unknown API paths answer in JSON rather than the default HTML error page.
 app.use("/api", (req, res) => {
