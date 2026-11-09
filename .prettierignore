@@ -1,0 +1,4 @@
+node_modules/
+.vercel
+client/dist/
+package-lock.json
