@@ -5,6 +5,7 @@ import passport from "./auth/passport.js";
 import { DB_NAME, getClientPromise } from "./db/client.js";
 import authRouter from "./routes/auth.js";
 import experimentsRouter from "./routes/experiments.js";
+import modelsRouter from "./routes/models.js";
 
 const isProduction = process.env.NODE_ENV === "production";
 const TWO_WEEKS_IN_SECONDS = 14 * 24 * 60 * 60;
@@ -48,6 +49,7 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/auth", authRouter);
 
+app.use("/api/models", modelsRouter);
 app.use("/api/experiments", experimentsRouter);
 
 // Unknown API paths answer in JSON rather than the default HTML error page.

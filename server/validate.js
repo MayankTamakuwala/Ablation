@@ -128,3 +128,15 @@ export function validateCredentials(body, { withDisplayName = false } = {}) {
 
   return credentials;
 }
+
+// Query string numbers arrive as strings and can be anything at all, so a
+// bad value falls back instead of reaching Mongo as a NaN limit.
+export function boundedInt(value, fallback, max) {
+  const parsed = Number(value);
+
+  if (!Number.isInteger(parsed) || parsed < 0) {
+    return fallback;
+  }
+
+  return Math.min(parsed, max);
+}
