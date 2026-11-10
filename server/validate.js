@@ -1,3 +1,5 @@
+export const EXPERIMENT_STATUSES = ["planned", "running", "concluded", "abandoned"];
+
 export class ValidationError extends Error {
   constructor(message) {
     super(message);
@@ -35,6 +37,67 @@ function text(value, label, { required = false, max = 300 } = {}) {
   }
 
   return trimmed;
+}
+
+function oneOf(value, allowed, label, { required = false, fallback } = {}) {
+  if (value === undefined || value === null || value === "") {
+    if (required) {
+      throw new ValidationError(label + " is required");
+    }
+    return fallback;
+  }
+
+  if (typeof value !== "string" || !allowed.includes(value)) {
+    throw new ValidationError(label + " must be one of " + allowed.join(", "));
+  }
+
+  return value;
+}
+
+export function validateExperiment(body, { partial = false } = {}) {
+  requireObject(body);
+
+  const experiment = {};
+  const required = !partial;
+
+  const title = text(body.title, "Title", { required, max: 120 });
+  if (title !== undefined) {
+    experiment.title = title;
+  }
+
+  const question = text(body.question, "Research question", { required, max: 500 });
+  if (question !== undefined) {
+    experiment.question = question;
+  }
+
+  const dataset = text(body.dataset, "Dataset", { required, max: 120 });
+  if (dataset !== undefined) {
+    experiment.dataset = dataset;
+  }
+
+  const baseModel = text(body.baseModel, "Base model", { required, max: 160 });
+  if (baseModel !== undefined) {
+    experiment.baseModel = baseModel;
+  }
+
+  if (!partial || body.status !== undefined) {
+    experiment.status = oneOf(body.status, EXPERIMENT_STATUSES, "Status", {
+      fallback: "planned",
+    });
+  }
+
+  const notes = text(body.notes, "Notes", { max: 2000 });
+  if (notes !== undefined) {
+    experiment.notes = notes;
+  }
+
+  // A partial update that named no known field is a client bug, not an
+  // instruction to stamp updatedAt and change nothing.
+  if (partial && Object.keys(experiment).length === 0) {
+    throw new ValidationError("No valid fields to update");
+  }
+
+  return experiment;
 }
 
 export function validateCredentials(body, { withDisplayName = false } = {}) {
