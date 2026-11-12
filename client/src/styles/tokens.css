@@ -1,0 +1,54 @@
+/*
+ * The palette and type scale from section 6 of the design document.
+ * Every contrast ratio in the comments was measured, not estimated, and these
+ * values carry into the final project unchanged.
+ */
+
+:root {
+  /* Text and surfaces */
+  --ink: #14181f; /* 17.06:1 on paper */
+  --ink-muted: #5a6472; /* 5.75:1 on paper */
+  --paper: #fbfaf8;
+  --surface: #ffffff;
+
+  /* Borders. --line is decorative only, at 1.26:1 it is not a control edge.
+     Anything that bounds a control uses --line-control at 3.53:1, which is
+     what axe enforces for non text contrast. */
+  --line: #e3e0d8;
+  --line-control: #8a8578;
+
+  /* Actions. Approve and cancel are fixed across the whole application. */
+  --accent: #2b50d8; /* 6.21:1 on paper */
+  --on-accent: #ffffff; /* 6.48:1 on accent */
+  --danger: #b3261e; /* 6.27:1 on paper */
+  --on-danger: #ffffff; /* 6.54:1 on danger */
+
+  /* Experiment status. Never used without the label as text. */
+  --status-planned: #64748b; /* 4.76:1 on white */
+  --status-running: #0f766e; /* 5.47:1 on white */
+  --status-concluded: #1e5128; /* 9.28:1 on white */
+  --status-abandoned: #7c5a3c; /* 6.20:1 on white */
+
+  /* Type */
+  --font-heading: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --text-title: 2rem;
+  --text-heading: 1.25rem;
+  --text-body: 1rem;
+  --text-secondary: 0.9375rem;
+  --text-caption: 0.8125rem;
+
+  /* Spacing, a 4px base. Nothing uses a value off this scale. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  --radius: 5px;
+  --radius-pill: 999px;
+}
