@@ -1,0 +1,133 @@
+import { useEffect, useId, useState } from "react";
+import StatusFilter from "./StatusFilter.jsx";
+import ExperimentRow from "./ExperimentRow.jsx";
+import Pagination from "./Pagination.jsx";
+import { buildQuery, request } from "../lib/api.js";
+import styles from "./ExperimentList.module.css";
+
+const EMPTY_COUNTS = { all: 0, planned: 0, running: 0, concluded: 0, abandoned: 0 };
+
+export default function ExperimentList() {
+  const [status, setStatus] = useState("");
+  const [search, setSearch] = useState("");
+  const [appliedSearch, setAppliedSearch] = useState("");
+  const [skip, setSkip] = useState(0);
+
+  const [page, setPage] = useState({
+    items: [],
+    total: 0,
+    counts: EMPTY_COUNTS,
+    limit: 20,
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const searchId = useId();
+
+  // Typing fires one request per keystroke without this. The applied value is
+  // what the query actually uses, so the input stays responsive either way.
+  useEffect(() => {
+    const timer = setTimeout(() => setAppliedSearch(search.trim()), 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  // Narrowing the result set while on page 3 would otherwise leave the viewer
+  // past the end of a shorter list, looking at nothing.
+  useEffect(() => {
+    setSkip(0);
+  }, [status, appliedSearch]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      setLoading(true);
+      setError("");
+
+      try {
+        const query = buildQuery({ status, search: appliedSearch, skip });
+        const result = await request("/api/experiments" + query);
+
+        if (!cancelled) {
+          setPage(result);
+        }
+      } catch (problem) {
+        if (!cancelled) {
+          setError(problem.message);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    load();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [status, appliedSearch, skip]);
+
+  const filtering = status !== "" || appliedSearch !== "";
+
+  return (
+    <>
+      <div className={styles.controls}>
+        <StatusFilter value={status} counts={page.counts} onChange={setStatus} />
+
+        <label className="visuallyHidden" htmlFor={searchId}>
+          Search experiments
+        </label>
+        <input
+          className={styles.search}
+          id={searchId}
+          type="search"
+          placeholder="Search title, question, dataset"
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+        />
+      </div>
+
+      {error && (
+        <p className={styles.error} role="alert">
+          {error}
+        </p>
+      )}
+
+      {loading && page.items.length === 0 && <p className={styles.message}>Loading...</p>}
+
+      {!loading && !error && page.items.length === 0 && (
+        <div className={styles.empty}>
+          <h2 className={styles.emptyHeading}>
+            {filtering ? "No experiments match this view" : "No experiments yet"}
+          </h2>
+          <p className={styles.emptyBody}>
+            {filtering
+              ? "Try a different status, or clear the search box."
+              : "An experiment is a question you are trying to answer, plus the dataset and base model you are answering it with. Runs get logged against it once it exists."}
+          </p>
+        </div>
+      )}
+
+      {page.items.length > 0 && (
+        <>
+          <ul className={styles.list}>
+            {page.items.map((experiment) => (
+              <li key={experiment._id}>
+                <ExperimentRow experiment={experiment} />
+              </li>
+            ))}
+          </ul>
+
+          <Pagination
+            skip={skip}
+            limit={page.limit}
+            total={page.total}
+            onChange={setSkip}
+          />
+        </>
+      )}
+    </>
+  );
+}

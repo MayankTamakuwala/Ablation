@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import AppHeader from "./components/AppHeader.jsx";
+import ExperimentList from "./components/ExperimentList.jsx";
 import SignInForm from "./components/SignInForm.jsx";
 import { request } from "./lib/api.js";
 import styles from "./App.module.css";
@@ -62,7 +63,7 @@ export default function App() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>Experiments</h1>
-        <p className={styles.placeholder}>The experiment list lands here next.</p>
+        <ExperimentList />
       </main>
     </div>
   );

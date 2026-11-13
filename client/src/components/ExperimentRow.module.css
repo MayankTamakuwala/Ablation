@@ -1,0 +1,74 @@
+.row {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-2) var(--space-4);
+}
+
+.title {
+  font-size: var(--text-body);
+  font-weight: 600;
+  grid-column: 1;
+}
+
+.question {
+  grid-column: 1;
+  margin: 0;
+  color: var(--ink);
+}
+
+.meta {
+  grid-column: 1;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+}
+
+.status {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+  align-self: start;
+  font-size: var(--text-caption);
+  font-weight: 500;
+  border: 1px solid currentColor;
+  border-radius: var(--radius-pill);
+  padding: 1px var(--space-3);
+  white-space: nowrap;
+}
+
+/* Colour never carries the meaning on its own: the label is always text. */
+.planned {
+  color: var(--status-planned);
+}
+
+.running {
+  color: var(--status-running);
+}
+
+.concluded {
+  color: var(--status-concluded);
+}
+
+.abandoned {
+  color: var(--status-abandoned);
+}
+
+@media (max-width: 640px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+
+  .status {
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: start;
+  }
+}
