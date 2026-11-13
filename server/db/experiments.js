@@ -7,8 +7,7 @@ async function experiments() {
   return getCollection(COLLECTION);
 }
 
-export async function listExperiments(userId, { status = "", search = "" } = {}) {
-  const collection = await experiments();
+function buildFilter(userId, { status = "", search = "" }) {
   const filter = { userId };
 
   if (status) {
@@ -20,7 +19,56 @@ export async function listExperiments(userId, { status = "", search = "" } = {})
     filter.$or = [{ title: pattern }, { question: pattern }, { dataset: pattern }];
   }
 
-  return collection.find(filter).sort({ updatedAt: -1 }).toArray();
+  return filter;
+}
+
+export async function listExperiments(
+  userId,
+  { status = "", search = "", limit = 20, skip = 0 } = {}
+) {
+  const collection = await experiments();
+  const filter = buildFilter(userId, { status, search });
+
+  // _id breaks ties so a row cannot appear on two pages when several
+  // experiments share an updatedAt value.
+  const [items, total] = await Promise.all([
+    collection
+      .find(filter)
+      .sort({ updatedAt: -1, _id: 1 })
+      .skip(skip)
+      .limit(limit)
+      .toArray(),
+    collection.countDocuments(filter),
+  ]);
+
+  return { items, total };
+}
+
+/**
+ * Counts per status for the filter chips.
+ *
+ * These deliberately ignore the status filter and respect the search box. The
+ * chips are how you switch status, so they have to show what you would get by
+ * switching, not what you already have selected.
+ */
+export async function countsByStatus(userId, { search = "" } = {}) {
+  const collection = await experiments();
+  const filter = buildFilter(userId, { search });
+
+  const rows = await collection
+    .aggregate([{ $match: filter }, { $group: { _id: "$status", n: { $sum: 1 } } }])
+    .toArray();
+
+  const counts = { all: 0, planned: 0, running: 0, concluded: 0, abandoned: 0 };
+
+  rows.forEach((row) => {
+    if (row._id in counts) {
+      counts[row._id] = row.n;
+    }
+    counts.all += row.n;
+  });
+
+  return counts;
 }
 
 export async function getExperiment(userId, id) {

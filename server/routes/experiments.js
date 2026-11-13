@@ -1,13 +1,22 @@
 import express from "express";
 import { requireAuth } from "../auth/passport.js";
 import {
+  countsByStatus,
   createExperiment,
   deleteExperiment,
   getExperiment,
   listExperiments,
   updateExperiment,
 } from "../db/experiments.js";
-import { EXPERIMENT_STATUSES, validateExperiment, ValidationError } from "../validate.js";
+import {
+  boundedInt,
+  EXPERIMENT_STATUSES,
+  validateExperiment,
+  ValidationError,
+} from "../validate.js";
+
+const DEFAULT_PAGE_SIZE = 20;
+const MAX_PAGE_SIZE = 100;
 
 const router = express.Router();
 
@@ -22,9 +31,18 @@ router.get("/", async (req, res, next) => {
     }
 
     const search = typeof req.query.search === "string" ? req.query.search.trim() : "";
-    const items = await listExperiments(req.user._id.toString(), { status, search });
+    const limit =
+      boundedInt(req.query.limit, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE) || DEFAULT_PAGE_SIZE;
+    const skip = boundedInt(req.query.skip, 0, 1000000);
 
-    res.json({ items });
+    const userId = req.user._id.toString();
+
+    const [{ items, total }, counts] = await Promise.all([
+      listExperiments(userId, { status, search, limit, skip }),
+      countsByStatus(userId, { search }),
+    ]);
+
+    res.json({ items, total, counts, limit, skip });
   } catch (error) {
     next(error);
   }
