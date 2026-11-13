@@ -1,3 +1,15 @@
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.newButton {
+  composes: buttonPrimary from "../styles/controls.module.css";
+  margin-left: auto;
+}
+
 .controls {
   display: flex;
   flex-wrap: wrap;

@@ -1,0 +1,88 @@
+.wrapper {
+  position: relative;
+}
+
+.field {
+  composes: field from "../styles/controls.module.css";
+}
+
+.label {
+  composes: label from "../styles/controls.module.css";
+}
+
+.input {
+  composes: input from "../styles/controls.module.css";
+  font-family: var(--font-mono);
+  font-size: var(--text-secondary);
+}
+
+.results {
+  list-style: none;
+  margin: var(--space-1) 0 0;
+  padding: var(--space-1);
+  background: var(--surface);
+  border: 1px solid var(--line-control);
+  border-radius: var(--radius);
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.hint {
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+  padding: var(--space-1) var(--space-2);
+  margin: 0;
+}
+
+/* Each result is a real button, so the whole picker is operable with Tab and
+   Enter without a custom keyboard handler or a combobox role to get wrong. */
+.result {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  width: 100%;
+  font: inherit;
+  text-align: left;
+  color: var(--ink);
+  background: none;
+  border: none;
+  border-radius: var(--radius);
+  padding: var(--space-2);
+  cursor: pointer;
+}
+
+.result:hover {
+  background: var(--paper);
+}
+
+.resultId {
+  font-family: var(--font-mono);
+  font-size: var(--text-secondary);
+  flex: 1;
+}
+
+.resultMeta {
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+.chosen {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin-top: var(--space-1);
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+}
+
+.chosenValue {
+  font-family: var(--font-mono);
+  color: var(--ink);
+}
+
+.clear {
+  composes: buttonPlain from "../styles/controls.module.css";
+  font-size: var(--text-caption);
+  padding: 0;
+}

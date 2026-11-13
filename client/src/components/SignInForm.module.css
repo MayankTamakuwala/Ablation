@@ -38,58 +38,29 @@
 }
 
 .field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
+  composes: field from "../styles/controls.module.css";
   margin-bottom: var(--space-4);
 }
 
 .label {
-  font-size: var(--text-caption);
-  font-weight: 500;
-  color: var(--ink-muted);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  composes: label from "../styles/controls.module.css";
 }
 
 .input {
-  font-family: inherit;
-  font-size: var(--text-body);
-  color: var(--ink);
-  background: var(--paper);
-  border: 1px solid var(--line-control);
-  border-radius: var(--radius);
-  padding: var(--space-2) var(--space-3);
-}
-
-.input:hover {
-  border-color: var(--ink-muted);
+  composes: input from "../styles/controls.module.css";
 }
 
 /* Errors belong to the credential pair, not to one field, so the message
    sits above the button rather than beside an input. */
 .error {
-  color: var(--danger);
-  font-size: var(--text-secondary);
+  composes: error from "../styles/controls.module.css";
   margin-bottom: var(--space-3);
 }
 
 .submit {
+  composes: buttonPrimary from "../styles/controls.module.css";
   width: 100%;
-  font-family: inherit;
-  font-size: var(--text-body);
-  font-weight: 500;
-  color: var(--on-accent);
-  background: var(--accent);
-  border: 1px solid var(--accent);
-  border-radius: var(--radius);
   padding: var(--space-3);
-  cursor: pointer;
-}
-
-.submit:disabled {
-  opacity: 0.6;
-  cursor: progress;
 }
 
 .switch {

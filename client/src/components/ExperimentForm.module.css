@@ -1,0 +1,76 @@
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line-control);
+  border-radius: var(--radius);
+  padding: var(--space-6);
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.heading {
+  font-size: var(--text-heading);
+}
+
+.created {
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+  margin: 0 0 0 auto;
+}
+
+.field {
+  composes: field from "../styles/controls.module.css";
+  margin-bottom: var(--space-4);
+}
+
+.label {
+  composes: label from "../styles/controls.module.css";
+}
+
+.input {
+  composes: input from "../styles/controls.module.css";
+}
+
+.textarea {
+  composes: textarea from "../styles/controls.module.css";
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.error {
+  composes: error from "../styles/controls.module.css";
+  margin-bottom: var(--space-3);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.submit {
+  composes: buttonPrimary from "../styles/controls.module.css";
+}
+
+.cancel {
+  composes: buttonPlain from "../styles/controls.module.css";
+}
+
+@media (max-width: 640px) {
+  .pair {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    padding: var(--space-4);
+  }
+}

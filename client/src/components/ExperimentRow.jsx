@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import styles from "./ExperimentRow.module.css";
 
-export default function ExperimentRow({ experiment }) {
+export default function ExperimentRow({ experiment, onEdit }) {
   const { title, question, dataset, baseModel, status } = experiment;
 
   return (
@@ -13,6 +13,12 @@ export default function ExperimentRow({ experiment }) {
         <span>{baseModel}</span>
         <span>{dataset}</span>
       </p>
+
+      <div className={styles.actions}>
+        <button type="button" className={styles.edit} onClick={() => onEdit(experiment)}>
+          Edit
+        </button>
+      </div>
     </article>
   );
 }
@@ -25,5 +31,8 @@ ExperimentRow.propTypes = {
     dataset: PropTypes.string.isRequired,
     baseModel: PropTypes.string.isRequired,
     status: PropTypes.oneOf(["planned", "running", "concluded", "abandoned"]).isRequired,
+    notes: PropTypes.string,
+    createdAt: PropTypes.string,
   }).isRequired,
+  onEdit: PropTypes.func.isRequired,
 };

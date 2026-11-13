@@ -1,4 +1,5 @@
 import { useEffect, useId, useState } from "react";
+import ExperimentForm from "./ExperimentForm.jsx";
 import StatusFilter from "./StatusFilter.jsx";
 import ExperimentRow from "./ExperimentRow.jsx";
 import Pagination from "./Pagination.jsx";
@@ -21,6 +22,10 @@ export default function ExperimentList() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  // null is closed, "new" is the create form, an object is an edit.
+  const [editing, setEditing] = useState(null);
+  const [reloadToken, setReloadToken] = useState(0);
 
   const searchId = useId();
 
@@ -67,12 +72,39 @@ export default function ExperimentList() {
     return () => {
       cancelled = true;
     };
-  }, [status, appliedSearch, skip]);
+  }, [status, appliedSearch, skip, reloadToken]);
 
   const filtering = status !== "" || appliedSearch !== "";
 
+  function handleSaved() {
+    setEditing(null);
+    // A new experiment sorts to the top, so the first page is what to show.
+    setSkip(0);
+    setReloadToken((token) => token + 1);
+  }
+
+  if (editing) {
+    return (
+      <ExperimentForm
+        experiment={editing === "new" ? null : editing}
+        onSaved={handleSaved}
+        onCancel={() => setEditing(null)}
+      />
+    );
+  }
+
   return (
     <>
+      <div className={styles.header}>
+        <button
+          type="button"
+          className={styles.newButton}
+          onClick={() => setEditing("new")}
+        >
+          + New experiment
+        </button>
+      </div>
+
       <div className={styles.controls}>
         <StatusFilter value={status} counts={page.counts} onChange={setStatus} />
 
@@ -115,7 +147,7 @@ export default function ExperimentList() {
           <ul className={styles.list}>
             {page.items.map((experiment) => (
               <li key={experiment._id}>
-                <ExperimentRow experiment={experiment} />
+                <ExperimentRow experiment={experiment} onEdit={setEditing} />
               </li>
             ))}
           </ul>
