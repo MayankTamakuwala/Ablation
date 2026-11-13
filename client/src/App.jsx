@@ -1,48 +1,68 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import AppHeader from "./components/AppHeader.jsx";
+import SignInForm from "./components/SignInForm.jsx";
+import { request } from "./lib/api.js";
 import styles from "./App.module.css";
 
 export default function App() {
-  const [apiStatus, setApiStatus] = useState("checking");
+  const [user, setUser] = useState(null);
+  const [checkingSession, setCheckingSession] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
 
-    async function checkApi() {
+    async function loadSession() {
       try {
-        const response = await fetch("/api/health");
-        const payload = await response.json();
+        const result = await request("/api/auth/me");
 
         if (!cancelled) {
-          setApiStatus(payload.ok ? "reachable" : "unexpected response");
+          setUser(result.user);
         }
       } catch {
         if (!cancelled) {
-          setApiStatus("unreachable");
+          setUser(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setCheckingSession(false);
         }
       }
     }
 
-    checkApi();
+    loadSession();
 
-    // StrictMode mounts effects twice in development, so a late response from
-    // the first mount must not write state after the second has taken over.
+    // StrictMode double mounts effects in development, so a response from the
+    // discarded first mount must not write state after the second took over.
     return () => {
       cancelled = true;
     };
   }, []);
 
+  const handleSignOut = useCallback(async () => {
+    try {
+      await request("/api/auth/logout", { method: "POST" });
+    } finally {
+      setUser(null);
+    }
+  }, []);
+
+  // The session check runs before anything renders, otherwise a signed in
+  // visitor sees the sign in screen flash before being replaced.
+  if (checkingSession) {
+    return <p className={styles.loading}>Loading...</p>;
+  }
+
+  if (!user) {
+    return <SignInForm onSignedIn={setUser} />;
+  }
+
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <div className={styles.headerInner}>
-          <span className={styles.brand}>Ablation</span>
-        </div>
-      </header>
+      <AppHeader user={user} onSignOut={handleSignOut} />
 
       <main className={styles.main}>
-        <h1 className={styles.title}>Ablation</h1>
-        <p className={styles.tagline}>A log for machine learning experiments.</p>
-        <p className={styles.status}>API: {apiStatus}</p>
+        <h1 className={styles.title}>Experiments</h1>
+        <p className={styles.placeholder}>The experiment list lands here next.</p>
       </main>
     </div>
   );
