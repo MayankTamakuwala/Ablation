@@ -1,4 +1,5 @@
 import { useEffect, useId, useState } from "react";
+import ConfirmDialog from "./ConfirmDialog.jsx";
 import ExperimentForm from "./ExperimentForm.jsx";
 import StatusFilter from "./StatusFilter.jsx";
 import ExperimentRow from "./ExperimentRow.jsx";
@@ -26,6 +27,10 @@ export default function ExperimentList() {
   // null is closed, "new" is the create form, an object is an edit.
   const [editing, setEditing] = useState(null);
   const [reloadToken, setReloadToken] = useState(0);
+
+  const [deleting, setDeleting] = useState(null);
+  const [deleteError, setDeleteError] = useState("");
+  const [deleteBusy, setDeleteBusy] = useState(false);
 
   const searchId = useId();
 
@@ -75,6 +80,36 @@ export default function ExperimentList() {
   }, [status, appliedSearch, skip, reloadToken]);
 
   const filtering = status !== "" || appliedSearch !== "";
+
+  async function handleDelete() {
+    setDeleteBusy(true);
+    setDeleteError("");
+
+    try {
+      await request("/api/experiments/" + deleting._id, { method: "DELETE" });
+
+      // Removing the only row on a later page would otherwise leave the
+      // viewer looking at an empty page that still has results before it.
+      const lastOnPage = page.items.length === 1 && skip > 0;
+
+      setDeleting(null);
+
+      if (lastOnPage) {
+        setSkip(Math.max(0, skip - page.limit));
+      } else {
+        setReloadToken((token) => token + 1);
+      }
+    } catch (problem) {
+      setDeleteError(problem.message);
+    } finally {
+      setDeleteBusy(false);
+    }
+  }
+
+  function cancelDelete() {
+    setDeleting(null);
+    setDeleteError("");
+  }
 
   function handleSaved() {
     setEditing(null);
@@ -147,7 +182,11 @@ export default function ExperimentList() {
           <ul className={styles.list}>
             {page.items.map((experiment) => (
               <li key={experiment._id}>
-                <ExperimentRow experiment={experiment} onEdit={setEditing} />
+                <ExperimentRow
+                  experiment={experiment}
+                  onEdit={setEditing}
+                  onDelete={setDeleting}
+                />
               </li>
             ))}
           </ul>
@@ -159,6 +198,18 @@ export default function ExperimentList() {
             onChange={setSkip}
           />
         </>
+      )}
+
+      {deleting && (
+        <ConfirmDialog
+          heading="Delete experiment"
+          subject={deleting.title}
+          confirmLabel="Delete"
+          error={deleteError}
+          busy={deleteBusy}
+          onConfirm={handleDelete}
+          onCancel={cancelDelete}
+        />
       )}
     </>
   );

@@ -1,0 +1,57 @@
+.dialog {
+  border: 1px solid var(--line-control);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  padding: var(--space-6);
+  max-width: 440px;
+  width: calc(100% - var(--space-8));
+}
+
+.dialog::backdrop {
+  background: rgb(20 24 31 / 45%);
+}
+
+.heading {
+  font-size: var(--text-heading);
+  margin-bottom: var(--space-3);
+}
+
+.message {
+  margin: 0 0 var(--space-6);
+  color: var(--ink);
+}
+
+.subject {
+  font-weight: 500;
+}
+
+.error {
+  composes: error from "../styles/controls.module.css";
+  margin-bottom: var(--space-3);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Destructive actions are filled only inside a confirmation, where the
+   decision has already been made deliberately. In the list row Delete is
+   outlined, so it never competes with the primary action. */
+.confirm {
+  composes: button from "../styles/controls.module.css";
+  color: var(--on-danger);
+  background: var(--danger);
+  border: 1px solid var(--danger);
+}
+
+.confirm:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.cancel {
+  composes: buttonPlain from "../styles/controls.module.css";
+}

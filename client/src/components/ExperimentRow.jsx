@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import styles from "./ExperimentRow.module.css";
 
-export default function ExperimentRow({ experiment, onEdit }) {
+export default function ExperimentRow({ experiment, onEdit, onDelete }) {
   const { title, question, dataset, baseModel, status } = experiment;
 
   return (
@@ -17,6 +17,13 @@ export default function ExperimentRow({ experiment, onEdit }) {
       <div className={styles.actions}>
         <button type="button" className={styles.edit} onClick={() => onEdit(experiment)}>
           Edit
+        </button>
+        <button
+          type="button"
+          className={styles.delete}
+          onClick={() => onDelete(experiment)}
+        >
+          Delete
         </button>
       </div>
     </article>
@@ -35,4 +42,5 @@ ExperimentRow.propTypes = {
     createdAt: PropTypes.string,
   }).isRequired,
   onEdit: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
 };

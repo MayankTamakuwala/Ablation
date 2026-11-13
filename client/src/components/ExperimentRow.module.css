@@ -46,6 +46,12 @@
   padding: var(--space-1) var(--space-3);
 }
 
+.delete {
+  composes: buttonDanger from "../styles/controls.module.css";
+  font-size: var(--text-caption);
+  padding: var(--space-1) var(--space-3);
+}
+
 .status {
   grid-column: 2;
   grid-row: 1;
@@ -93,7 +99,8 @@
     justify-self: stretch;
   }
 
-  .edit {
+  .edit,
+  .delete {
     flex: 1;
     padding: var(--space-2) var(--space-3);
   }
