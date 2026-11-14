@@ -1,0 +1,4 @@
+# Only the client build and the api function need to reach Vercel. The files
+# below are repository material that would otherwise upload on every deploy.
+docs/
+wireframe/
