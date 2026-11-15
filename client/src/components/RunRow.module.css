@@ -1,0 +1,81 @@
+.row > th,
+.row > td {
+  padding: var(--space-3) var(--space-3);
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+  text-align: left;
+  font-weight: 400;
+}
+
+.run {
+  min-width: 220px;
+}
+
+.label {
+  display: block;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.model {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+  overflow-wrap: anywhere;
+}
+
+.date {
+  white-space: nowrap;
+  font-size: var(--text-secondary);
+  color: var(--ink-muted);
+}
+
+/* Figures line up in a monospaced face, right aligned, so a column of
+   learning rates or accuracies reads as magnitudes. */
+.number {
+  font-family: var(--font-mono);
+  font-size: var(--text-secondary);
+  text-align: right !important;
+  white-space: nowrap;
+}
+
+.reproduced {
+  font-size: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.actions {
+  white-space: nowrap;
+}
+
+.edit,
+.delete {
+  min-height: 36px;
+  padding: var(--space-1) var(--space-3);
+  font: inherit;
+  font-size: var(--text-secondary);
+  background: var(--surface);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.edit {
+  color: var(--ink);
+  border: 1px solid var(--line-control);
+}
+
+/* Destructive actions are outlined in the row and filled only inside the
+   confirmation dialog. */
+.delete {
+  margin-left: var(--space-2);
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+
+@media (max-width: 640px) {
+  .edit,
+  .delete {
+    min-height: 44px;
+  }
+}
