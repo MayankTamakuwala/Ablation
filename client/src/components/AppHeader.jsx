@@ -1,15 +1,37 @@
 import PropTypes from "prop-types";
 import styles from "./AppHeader.module.css";
 
-export default function AppHeader({ user, onSignOut }) {
+const SECTIONS = [
+  { id: "experiments", label: "Experiments" },
+  { id: "runs", label: "Runs" },
+];
+
+export default function AppHeader({ user, view, onNavigate, onSignOut }) {
   return (
     <header className={styles.header}>
       <div className={styles.inner}>
         <span className={styles.brand}>Ablation</span>
 
         <nav className={styles.nav} aria-label="Sections">
-          <span className={styles.navItem}>Experiments</span>
-          <span className={styles.navItemMuted}>Runs</span>
+          {SECTIONS.map((section) => {
+            const current = section.id === view;
+
+            return (
+              <button
+                key={section.id}
+                type="button"
+                className={
+                  styles.navButton +
+                  " " +
+                  (current ? styles.navItem : styles.navItemMuted)
+                }
+                aria-current={current ? "page" : undefined}
+                onClick={() => onNavigate(section.id)}
+              >
+                {section.label}
+              </button>
+            );
+          })}
         </nav>
 
         <span className={styles.spacer} />
@@ -28,5 +50,7 @@ AppHeader.propTypes = {
     username: PropTypes.string.isRequired,
     displayName: PropTypes.string,
   }).isRequired,
+  view: PropTypes.oneOf(["experiments", "runs"]).isRequired,
+  onNavigate: PropTypes.func.isRequired,
   onSignOut: PropTypes.func.isRequired,
 };

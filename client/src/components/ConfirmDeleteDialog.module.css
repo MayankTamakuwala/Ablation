@@ -1,0 +1,71 @@
+.dialog {
+  width: min(440px, calc(100vw - var(--space-8)));
+  padding: 0;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line-control);
+  border-radius: var(--radius);
+}
+
+.dialog::backdrop {
+  background: rgb(20 24 31 / 55%);
+}
+
+.body {
+  padding: var(--space-6);
+}
+
+.title {
+  font-size: var(--text-heading);
+  margin-bottom: var(--space-3);
+}
+
+.text {
+  margin: 0 0 var(--space-4);
+  overflow-wrap: anywhere;
+}
+
+.error {
+  min-height: 1.5em;
+  margin: 0 0 var(--space-3);
+  color: var(--danger);
+  font-size: var(--text-secondary);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/* Filled danger, only here. In the list the button is outlined. */
+.confirm {
+  min-height: 44px;
+  padding: var(--space-2) var(--space-4);
+  font: inherit;
+  color: var(--on-danger);
+  background: var(--danger);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+/* Cancel is always a plain text button so it never competes with the action
+   beside it. */
+.cancel {
+  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+  font: inherit;
+  color: var(--ink);
+  background: none;
+  border: 0;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.confirm:disabled,
+.cancel:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
