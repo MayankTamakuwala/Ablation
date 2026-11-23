@@ -155,7 +155,7 @@ function buildExperiments(userId, models) {
       status: pick(EXPERIMENT_STATUSES),
       notes: pick(NOTES),
       createdAt,
-      updatedAt: new Date(createdAt.getTime() + intBetween(0, 96) * 60 * 60 * 1000),
+      updatedAt: new Date(Math.min(createdAt.getTime() + intBetween(0, 96) * 60 * 60 * 1000, Date.now())),
     });
   }
 
