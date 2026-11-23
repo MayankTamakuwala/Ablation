@@ -12,7 +12,7 @@ router.get("/", async (req, res, next) => {
   try {
     const search = typeof req.query.search === "string" ? req.query.search.trim() : "";
     const task = typeof req.query.task === "string" ? req.query.task.trim() : "";
-    const limit = boundedInt(req.query.limit, 40, 200);
+    const limit = boundedInt(req.query.limit, 40, 200) || 40;
 
     const items = await listModels({ search, task, limit });
     res.json({ items });
