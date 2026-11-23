@@ -31,7 +31,19 @@ export async function createUser({ username, displayName, passwordHash }) {
     createdAt: new Date(),
   };
 
-  const result = await collection.insertOne(document);
+ let result;
+
+  try {
+    result = await collection.insertOne(document);
+  } catch (error) {
+    if (error.code === 11000) {
+      const taken = new Error("That username is taken");
+      taken.status = 409;
+      throw taken;
+    }
+    throw error;
+  }
+
   return { ...document, _id: result.insertedId };
 }
 
