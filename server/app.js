@@ -9,6 +9,9 @@ import modelsRouter from "./routes/models.js";
 import runsRouter from "./routes/runs.js";
 
 const isProduction = process.env.NODE_ENV === "production";
+if (isProduction && !process.env.SESSION_SECRET) {
+  throw new Error("SESSION_SECRET must be set in production");
+}
 const TWO_WEEKS_IN_SECONDS = 14 * 24 * 60 * 60;
 
 const app = express();
